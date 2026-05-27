@@ -3,7 +3,7 @@ from flask import Flask, request, session, redirect, render_template_string
 app = Flask(__name__)
 app.secret_key = "ALBRAWE_FINAL_CORE_LOCK_2026"
 
-# 🛡️ خوارزمية الاستدعاء المعزول كلياً سيبرانياً لحماية الحاوية المشتركة من التعارض
+# 🛡️ الحصانة السيبرانية: استدعاء حزم الصفحات السبعة كدوائر مستقلة لمنع هبوط السيرفر
 try:
     from home import home_blueprint
     app.register_blueprint(home_blueprint)
@@ -44,26 +44,22 @@ try:
     app.register_blueprint(scripts_blueprint)
 except Exception: pass
 
-# الاستدعاء الموحد لملفات باقة الألعاب الستة المتواجدة بداخل مجلد games_package
-try: from games_package.snake import snake_blueprint
+# 🎮 تصحيح وتأمين مسارات استدعاء باقة الألعاب الستة من مجلد games_package
+try: from games_package.snake import snake_blueprint; app.register_blueprint(snake_blueprint)
 except Exception: pass
-try: from games_package.tetris import tetris_blueprint
+try: from games_package.tetris import tetris_blueprint; app.register_blueprint(tetris_blueprint)
 except Exception: pass
-try: from games_package.xo import xo_blueprint
+try: from games_package.xo import xo_blueprint; app.register_blueprint(xo_blueprint)
 except Exception: pass
-try: from games_package.shooter import shooter_blueprint
+try: from games_package.shooter import shooter_blueprint; app.register_blueprint(shooter_blueprint)
 except Exception: pass
-try: from games_package.clicker import clicker_blueprint
+try: from games_package.clicker import clicker_blueprint; app.register_blueprint(clicker_blueprint)
 except Exception: pass
-try: from games_package.card_game import card_game_blueprint
+try: from games_package.card_game import card_game_blueprint; app.register_blueprint(card_game_blueprint)
 except Exception: pass
 @app.after_request
 def inject_global_analytics_tracker(response):
-    """
-    مُحرك الرصد والمزامنة العالمي!
-    تم تنظيف صياغته وحظر رصد ملفات الصور والـ Favicon واللوحة لمنع ومسح الـ 500 كلياً،
-    مع المحافظة الكاملة على تجميع وتمرير ثواني استخدام باقة الألعاب حياً.
-    """
+    # جدار حماية الموارد الثابتة: حظر رصد وتتبع الأيقونات والصور لمنع الـ 500 كلياً
     if request.path.endswith('.ico') or request.path.endswith('.png') or request.path.endswith('.jpg'):
         return response
 
@@ -71,9 +67,7 @@ def inject_global_analytics_tracker(response):
         try:
             if "albrawe-admin-panel-2026" in request.path or "albrawe-admin" in request.path:
                 return response
-                
             text = response.get_data(as_text=True)
-            
             global_tracker_script = """
             <script>
                 document.addEventListener("DOMContentLoaded", () => {
@@ -82,7 +76,6 @@ def inject_global_analytics_tracker(response):
                         storedUser = "لاعب_مستمر_" + Math.floor(100 + Math.random() * 900);
                         localStorage.setItem("albrawe_tracker_username", storedUser);
                     }
-                    
                     let userLocation = "القاهرة - مصر 🇪🇬";
                     fetch("https://ipapi.co")
                     .then(res => res.json())
@@ -102,16 +95,13 @@ def inject_global_analytics_tracker(response):
                             body: JSON.stringify({ username: storedUser, location: userLocation })
                         });
                     }
-                    
                     let currentPath = window.location.pathname.replace("/", "") || "site";
                     let localDuration = 0;
-                    
                     setInterval(() => {
                         if (typeof isPaused !== "undefined" && isPaused) return;
                         if (typeof isGameOver !== "undefined" && isGameOver) return;
                         localDuration += 5;
                     }, 5000);
-                    
                     window.addEventListener("beforeunload", () => {
                         if (localDuration > 0) {
                             navigator.sendBeacon("/api/update_duration", JSON.stringify({ 
