@@ -3,14 +3,15 @@ from flask import Blueprint, render_template_string, current_app, jsonify
 
 menu_blueprint = Blueprint('menu', __name__)
 
-# عزل التنسيقات الرقمية المتجاوبة تماماً للستارة ومفتاح تبديل الأنماط الحركي لعام 2026
+# 🕹️ الهندسة الأفقية الصارمة: إخفاء القائمة يميناً وتحريكها كستارة جانبية منزلقة حرة
 MENU_CSS = """
 <style>
-    .sidebar-overlay { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: var(--bg-sidebar, rgba(10, 14, 20, 0.99)); border-left: 2px solid #58a6ff; box-shadow: -15px 0 35px rgba(0, 0, 0, 0.8); z-index: 99999; display: flex; flex-direction: column; padding: 25px 20px; box-sizing: border-box; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; text-align: right; }
+    .sidebar-overlay { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: rgba(10, 14, 20, 0.99); border-left: 2px solid #58a6ff; box-shadow: -15px 0 35px rgba(0, 0, 0, 0.8); z-index: 999999 !important; display: flex; flex-direction: column; padding: 25px 20px; box-sizing: border-box; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; overflow-y: auto; text-align: right; }
     .sidebar-overlay.active { right: 0 !important; }
     
-    .close-menu-btn { background: none; border: none; color: #f85149; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; align-self: flex-end; margin-bottom: 25px; font-family: inherit; }
-    .close-menu-btn:hover { text-shadow: 0 0 8px #f85149; }
+    /* إصلاح وتموضع زر الإغلاق الحر ليكون بارزاً وقابلاً للمس والضغط الفوري */
+    .close-menu-btn { background: #161b22; border: 1px solid #30363d; color: #f85149; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; align-self: flex-start; margin-bottom: 25px; font-family: inherit; z-index: 1000000 !important; transition: 0.2s; }
+    .close-menu-btn:hover { background: #f85149; color: #fff; box-shadow: 0 0 10px #f85149; }
     
     .sidebar-links-wrapper { display: flex; flex-direction: column; text-align: right; padding-right: 5px; }
     .section-menu-divider { font-size: 15px; font-weight: bold; display: flex; align-items: center; gap: 8px; justify-content: flex-start; margin-top: 15px; margin-bottom: 12px; border-bottom: 1px dashed var(--border-color, #21262d); padding-bottom: 6px; color: var(--text-muted, #8b949e); }
@@ -29,10 +30,8 @@ MENU_CSS = """
     .general-link-item { text-decoration: none; font-size: 14px; color: var(--text-general, #c9d1d9); padding: 10px 0; display: block; font-weight: bold; transition: 0.2s; border-bottom: 1px solid var(--border-dashed, #161b22); }
     .general-link-item:hover { color: #58a6ff; text-shadow: 0 0 8px #58a6ff; padding-right: 4px; }
     
-    /* 🌓 هندسة وتنسيق مفتاح الوضع الفاتح والداكن الأسفل المحمي */
     .theme-toggle-container { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color, #21262d); display: flex; justify-content: center; }
     .theme-toggle-btn { background: var(--bg-btn, #161b22); border: 1px solid var(--border-color, #30363d); color: var(--text-theme-btn, #58a6ff); font-size: 12.5px; font-weight: bold; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-    .theme-toggle-btn:hover { border-color: #58a6ff; box-shadow: 0 0 10px rgba(88,166,255,0.15); }
 </style>
 """
 @menu_blueprint.route('/api/get_sidebar_menu')
@@ -50,9 +49,9 @@ def get_sidebar_menu():
                         raw_lines = f.readlines()
                         lines = [line.replace('\\n', '').replace('\\r', '').strip() for line in raw_lines if line.strip()]
                         
-                    game_name = lines[0] if len(lines) > 0 else game_slug
-                    game_icon = lines[1] if len(lines) > 1 else "fas fa-gamepad"
-                    game_color = lines[2] if len(lines) > 2 else "#fff"
+                    game_name = lines if len(lines) > 0 else game_slug
+                    game_icon = lines if len(lines) > 1 else "fas fa-gamepad"
+                    game_color = lines if len(lines) > 2 else "#fff"
                     
                     node_html = f'<a href="/{game_slug}" class="game-link-btn" style="color: {game_color};"><i class="{game_icon}"></i> {game_name}</a>'
                     games_list_nodes.append(node_html)
@@ -63,7 +62,9 @@ def get_sidebar_menu():
 
     MENU_CANVAS_BODY = """
     <div class="sidebar-overlay" id="slidingSidebarMenu">
+        <!-- ز الإغلاق المصحح التاتش والمثبت بـ z-index قاطع لمنع الحظر البصري -->
         <button class="close-menu-btn" onclick="toggleSidebarMenu(false)"><i class="fas fa-times"></i> إغلاق القائمة</button>
+        
         <div class="sidebar-links-wrapper">
             <a href="/" class="general-link-item" style="color:var(--text-home-btn, #fff);">البوابة الرئيسية 🏠</a>
             
@@ -82,7 +83,6 @@ def get_sidebar_menu():
             <a href="https://t.me" target="_blank" class="general-link-item" style="color:#388bfd; border-bottom:none;">حسابي في التليجرام ✈️</a>
         </div>
         
-        <!-- مفتاح تبديل الأنماط التفاعلي المستقر أسفل الستارة -->
         <div class="theme-toggle-container">
             <button class="theme-toggle-btn" onclick="toggleGlobalThemeMode()">
                 <i class="fas fa-adjust"></i> <span id="themeToggleTextBtn">الوضع الفاتح ⚪</span>
