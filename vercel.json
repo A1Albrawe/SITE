@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "framework": "flask",
   "builds": [
     {
       "src": "app.py",
@@ -8,14 +7,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/favicon.ico",
-      "dest": "static/favicon.ico"
-    },
-    {
-      "src": "/static/(.*)",
-      "dest": "static/$1"
-    },
     {
       "src": "/(.*)",
       "dest": "app.py"
