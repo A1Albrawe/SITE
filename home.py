@@ -2,155 +2,139 @@ from flask import Blueprint, render_template_string
 
 home_blueprint = Blueprint('home', __name__)
 
-# 🪐 الجزء الأول: عزل التنسيقات وتطهير شبكة الليزر الخلفية التكتيكية الهادئة والمريحة للعين
+# عزل التنسيقات الفلورسنتية الحركية لمحاكاة ملفك الشخصي بالملي وبدون تداخل الأقواس
 HOME_CSS_PART1 = """
 <style>
     :root {
-        --bg-global: #030508; --text-main: #c9d1d9; --bg-card: rgba(13, 17, 23, 0.85); 
-        --border-main: #21262d; --border-neon: #3fb950; --border-cyber: #ff007f; --text-white: #fff; --border-sub: #30363d;
+        --bg-global: #06090d; --text-main: #c9d1d9; --bg-card: #0d1117; 
+        --border-main: #30363d; --border-neon: #3fb950; --border-cyber: #ff007f; --text-white: #fff; --border-sub: #21262d;
     }
     
-    body { font-family: 'Courier New', Courier, monospace; background: var(--bg-global); color: var(--text-main); margin: 0; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; min-height: 100vh; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg-global); color: var(--text-main); margin: 0; padding: 0; box-sizing: border-box; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
     
-    /* 🛰️ إعادة هندسة شبكة الخلفية التكتيكية لتكون هادئة جداً، شفافة، وسينمائية خلف الكرت بنقاء مطبق */
-    .radar-background-grid { position: absolute; width: 600px; height: 600px; border-radius: 50%; border: 1px solid rgba(63, 185, 80, 0.12); pointer-events: none; z-index: 1; animation: radarRotate 30s linear infinite; display: flex; align-items: center; justify-content: center; opacity: 0.85; }
-    .radar-background-grid::before { content: ''; position: absolute; width: 75%; height: 75%; border-radius: 50%; border: 1px dashed rgba(255, 0, 127, 0.1); animation: radarPulse 5s ease-in-out infinite alternate; }
-    .radar-background-grid::after { content: ''; position: absolute; width: 45%; height: 45%; border-radius: 50%; border: 1px solid rgba(88, 166, 255, 0.06); }
-    .radar-sweep-line { position: absolute; top: 50%; left: 50%; width: 50%; height: 1.5px; background: linear-gradient(90deg, rgba(63,185,80,0.3) 0%, rgba(63,185,80,0) 100%); transform-origin: left center; animation: sweepSweep 8s linear infinite; }
-
-    @keyframes radarRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes radarPulse { 0% { transform: scale(0.95); opacity: 0.4; } 100% { transform: scale(1.05); opacity: 1; } }
-    @keyframes sweepSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    .top-nav { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto 20px auto; border-bottom: 2px solid var(--border-sub); padding-bottom: 14px; box-sizing: border-box; position: relative; z-index: 100; }
-    .brand-logo { font-size: 24px; font-weight: bold; color: var(--text-white); text-shadow: 0 0 10px var(--border-neon), 0 0 20px var(--border-cyber); text-decoration: none; font-family: monospace; cursor: pointer; }
-    .menu-btn-trigger { background: #161b22; border: 1px solid var(--border-sub); color: var(--border-neon); padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: 0.2s; }
-    .menu-btn-trigger:hover { background: var(--border-neon); color: #000; box-shadow: 0 0 15px var(--border-neon); }
-</style>
-"""
-# 🪐 الجزء الثاني: قفل وتثبيت أبعاد كرت العرض ثنائي الأجنحة لمنع هبوطه أو تعليقه عند فتح المنيو كلياً
-HOME_CSS_PART2 = """
-<style>
-    .main-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; z-index: 10; height: calc(100vh - 120px); }
+    .top-nav { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 15px 25px; box-sizing: border-box; position: relative; z-index: 1000; border-bottom: 1px solid var(--border-sub); }
+    .brand-logo { font-size: 24px; font-weight: bold; color: var(--text-white); text-shadow: 0 0 8px var(--border-neon); text-decoration: none; font-family: monospace; cursor: pointer; }
+    .menu-btn-trigger { background: var(--bg-card); border: 1px solid var(--border-main); color: var(--border-neon); padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: 0.2s; }
+    .menu-btn-trigger:hover { background: var(--border-neon); color: #000; box-shadow: 0 0 12px var(--border-neon); }
     
-    /* 💻 تثبيت وتأمين موقع الكرت جغرافياً في منتصف الشاشة بنسق Absolute لمنع التعليق */
-    .responsive-profile-wrapper { 
-        display: flex; flex-direction: row; gap: 40px; width: 100%; max-width: 1100px; 
-        background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 20px; 
-        padding: 45px; box-shadow: 0 35px 70px rgba(0,0,0,0.7); 
-        border-bottom: 4px solid var(--border-neon); border-right: 4px solid var(--border-cyber);
-        box-sizing: border-box; align-items: center; direction: rtl; 
-        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-        transform-style: preserve-3d;
-        transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
-        transition: transform 0.15s ease, box-shadow 0.3s ease;
-        position: relative; z-index: 50;
-    }
-    .responsive-profile-wrapper:hover { box-shadow: 0 0 30px rgba(63,185,80,0.15), 0 0 40px rgba(255,0,127,0.15); }
+    .profile-master-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px 40px 15px; box-sizing: border-box; position: relative; z-index: 10; }
     
-    .profile-sidebar-zone { flex: 1; max-width: 280px; display: flex; flex-direction: column; align-items: center; text-align: center; border-left: 2px solid var(--border-sub); padding-left: 30px; box-sizing: border-box; transform: translateZ(30px); }
-    .profile-content-zone { flex: 2; display: flex; flex-direction: column; justify-content: center; text-align: right; box-sizing: border-box; padding-right: 10px; transform: translateZ(20px); }
+    /* 🎮 هندسة غلاف الألعاب والاسم المشتعل (Cyber Cover Graphic Header) المستنسخ من صورتك بالملي */
+    .cyber-profile-cover { width: 100%; height: 350px; background: linear-gradient(135deg, #1f1a3a 0%, #0d1117 50%, #1a233a 100%); border-radius: 0 0 18px 18px; border: 1px solid var(--border-main); border-bottom: 4px solid var(--border-neon); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+    .cover-gamepad-icon { font-size: 90px; color: #3fb950; text-shadow: 0 0 25px #3fb950, 0 0 45px #ff007f; animation: gamepadFloat 4s ease-in-out infinite alternate; margin-bottom: 10px; }
+    .cover-brand-name { font-size: 55px; font-weight: 900; color: #fff; letter-spacing: 3px; font-family: 'Impact', 'Arial Black', sans-serif; text-transform: uppercase; background: linear-gradient(to bottom, #ffea7f, #ff7b72, #ff5555); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 12px #ff7b72); margin: 0; }
     
-    .avatar-wrapper { width: 150px; height: 150px; border-radius: 18px; border: 2px solid var(--border-cyber); overflow: hidden; box-shadow: 0 0 25px rgba(255,0,127,0.25); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; background: #04060a; }
-    .avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    @keyframes gamepadFloat { 0% { transform: translateY(0) rotate(-2deg); } 100% { transform: translateY(-15px) rotate(2deg); } }
+    /* 🖼️ هندسة ومقاييس الأفاتار الدائري التداخلي التفاعلي (Overlapping Circular Avatar) */
+    .profile-meta-row { display: flex; align-items: flex-end; gap: 30px; margin-top: -65px; padding: 0 40px; box-sizing: border-box; width: 100%; direction: rtl; position: relative; z-index: 100; }
     
-    .profile-name { font-size: 30px; font-weight: bold; color: var(--text-white); margin: 0 0 8px 0; text-shadow: 0 0 8px rgba(255,255,255,0.2); font-family: monospace; }
-    .profile-title { font-size: 11.5px; font-weight: bold; color: var(--border-neon); margin: 0; text-transform: uppercase; letter-spacing: 0.8px; }
+    .avatar-wrapper-circle { width: 155px; height: 155px; border-radius: 50%; border: 5px solid var(--bg-global); overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); background: #04060a; flex-shrink: 0; transition: transform 0.3s; }
+    .avatar-wrapper-circle:hover { transform: scale(1.04) rotate(3deg); }
+    .avatar-img-circle { width: 100%; height: 100%; object-fit: cover; }
     
-    .details-sub-box { display: flex; flex-direction: column; gap: 16px; font-size: 15px; line-height: 1.7; }
-    .meta-item { display: block; color: var(--text-main); }
-    .meta-label { font-weight: bold; color: var(--text-white); }
-    .tech-highlight { color: #58a6ff; font-weight: bold; font-family: monospace; }
+    .profile-identity-zone { flex: 1; text-align: right; padding-bottom: 15px; }
+    .user-full-name { font-size: 28px; font-weight: bold; color: var(--text-white); margin: 0 0 5px 0; display: flex; align-items: center; gap: 10px; }
+    .user-slug-name { font-size: 18px; color: #8b949e; font-weight: 500; font-family: monospace; }
     
-    .global-footer-bar { width: 100%; text-align: center; padding-top: 15px; border-top: 1px solid var(--border-sub); font-size: 12px; color: #8b949e; font-family: monospace; position: relative; z-index: 100; margin-top: auto; }
+    .followers-badge-line { font-size: 13.5px; color: #8b949e; margin: 8px 0 0 0; font-weight: 500; }
+    .followers-count { color: var(--text-white); font-weight: bold; }
+    
+    /* 🛠️ أجنحة لوحة المعلومات الموثقة لجامعة عين شمس والثانوية */
+    .info-dashboard-card { background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 14px; padding: 30px; margin-top: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: right; direction: rtl; box-sizing: border-box; }
+    .dashboard-title-row { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; color: #58a6ff; margin-bottom: 20px; border-bottom: 1px solid var(--border-sub); padding-bottom: 10px; }
+    
+    .meta-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .info-item-box { display: flex; align-items: center; gap: 12px; font-size: 14.5px; color: var(--text-main); line-height: 1.5; }
+    .info-item-box i { color: #8b949e; width: 20px; text-align: center; font-size: 16px; }
+    .highlight-text-blue { color: #58a6ff; font-weight: bold; text-decoration: none; }
+    .highlight-text-blue:hover { text-decoration: underline; }
     
     @media (max-width: 850px) {
-        body { padding: 15px; overflow-y: auto; } .main-container { height: auto; margin-top: 20px; } .responsive-profile-wrapper { flex-direction: column; align-items: center; padding: 25px; max-width: 440px; transform: none !important; }
-        .profile-sidebar-zone { flex: none; width: 100%; max-width: 100%; border-left: none; border-bottom: 2px solid var(--border-sub); padding-left: 0; padding-bottom: 25px; margin-bottom: 20px; }
-        .profile-content-zone { width: 100%; padding-right: 0; }
+        .cyber-profile-cover { height: 220px; } .cover-gamepad-icon { font-size: 55px; } .cover-brand-name { font-size: 32px; }
+        .profile-meta-row { flex-direction: column; align-items: center; text-align: center; margin-top: -75px; padding: 0 15px; }
+        .profile-identity-zone { text-align: center; padding-bottom: 0; } .user-full-name { justify-content: center; flex-direction: column; gap: 4px; }
+        .meta-info-grid { grid-template-columns: 1fr; }
     }
 </style>
 """
-# 🪐 الجزء الثالث: الهيكل الصافي لـ HTML ومحرك حساب زوايا الـ 3D وجلب الستارة الموحدة بالأولوية المطلقة
 HOME_HTML_BODY = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Albrawe | البوابة الرسمية لعام 2026</title>
+    <title>علي احمد البراوي | البوابة المعتمدة</title>
     <link rel="stylesheet" href="https://cloudflare.com">
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     """ + HOME_CSS_PART1 + HOME_CSS_PART2 + """
 </head>
 <body>
 
-    <!-- شبكة الرادار الدائرية النيونية المتزنة والمصفاة بنعومة تامة -->
-    <div class="radar-background-grid">
-        <div class="radar-sweep-line"></div>
-    </div>
-
     <div class="top-nav">
         <a href="/" class="brand-logo">Albrawe</a>
         <button class="menu-btn-trigger" onclick="loadAndOpenSidebarMenu()"><i class="fas fa-bars"></i> القائمة</button>
     </div>
 
-    <!-- حاوية الاستقبال الممنوحة أعلى أولوية عرض فوق الكرت لمنع التعليق -->
+    <!-- صندوق الاستقبال الشاغر لحقن كود الـ Sidebar المطور المنبثق دائرياً من menu.py حياً -->
     <div id="dynamicMenuInjectionZone"></div>
 
-    <div class="main-container">
-        <div class="responsive-profile-wrapper" id="cyberTiltCard3D">
-            
-            <div class="profile-sidebar-zone">
-                <div class="avatar-wrapper">
-                    <img class="avatar-img" src="/static/avatar.png" alt="Albrawe Profile" onerror="this.src='https://flagcdn.com'">
-                </div>
-                <h1 class="profile-name">Albrawe</h1>
-                <div class="profile-title">Architecture & Software Engineer</div>
-            </div>
-            
-            <div class="profile-content-zone">
-                <div class="details-sub-box">
-                    <span class="meta-item">
-                        ⚡ <span class="meta-label">خبراتي:</span> بناء وتطوير تطبيقات الويب الكاملة، وتصميم وتعديل اسكريبتات البايثون. إنشاء وتصميم صفحات الويب المتكاملة، معالجة البيانات المحلية، والواجهات الذكية.
-                    </span>
-                    <span class="meta-item" style="border-top: 1px dashed var(--border-sub); padding-top: 12px; margin-top: 2px;">
-                        🛠️ <span class="meta-label">التقنيات الأساسية:</span>
-                        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
-                            <div>🔹 <span class="tech-highlight">Python (Flask)</span></div>
-                            <div>🔹 <span class="tech-highlight">JavaScript (ES6)</span></div>
-                        </div>
-                    </span>
-                </div>
-            </div>
-            
+    <div class="profile-master-container">
+        
+        <!-- 🎮 الغلاف الفاخر المستنسخ من صورتك بالبكسل حاملا الاسم الكبير المشتعل -->
+        <div class="cyber-profile-cover">
+            <div class="cover-gamepad-icon"><i class="fas fa-gamepad"></i></div>
+            <h2 class="cover-brand-name">ALBRAWE</h2>
         </div>
+        
+        <!-- 🖼️ صف الهوية البصرية والأفاتار الدائري التداخلي المتطابق كلياً حياً -->
+        <div class="profile-meta-row">
+            <div class="avatar-wrapper-circle">
+                <img class="avatar-img-circle" src="/static/avatar.png" alt="علي احمد البراوي" onerror="this.src='https://flagcdn.com'">
+            </div>
+            
+                <div class="user-full-name">
+                    <span>علي احمد البراوي</span>
+                    <span class="user-slug-name">(Albrawe)</span>
+                </div>
+                <div class="followers-badge-line">
+                    المتابعون <span class="followers-count">١٧١</span> • يتابع <span class="followers-count">١٥٧</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 🛠️ لوحة المعلومات الموثقة لجامعة عين شمس وابن خلدون كما بالصورة بالملي -->
+        <div class="info-dashboard-card">
+            <div class="dashboard-title-row">
+                <i class="fas fa-info-circle"></i> لوحة المعلومات والنبذة التعريفية المعتمدة
+            </div>
+            <div class="meta-info-grid">
+                <div class="info-item-box">
+                    <i class="fas fa-briefcase"></i>
+                    <span>منشئ محتوى رقمي حياً بـ <span style="color:var(--text-white); font-weight:bold;">Cairo</span> • عمل حر 💼</span>
+                </div>
+                <div class="info-item-box">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>درس في <span class="highlight-text-blue">Ain Shams University</span> 🎓</span>
+                </div>
+                <div class="info-item-box">
+                    <i class="fas fa-school"></i>
+                    <span>درس في <span style="color:var(--text-white); font-weight:bold;">ابن خلدون الثانوية</span> 🏫</span>
+                </div>
+                <div class="info-item-box" style="border-top:1px dashed var(--border-sub); padding-top:10px; grid-column:1/-1;">
+                    <i class="fas fa-user-shield" style="color:#3fb950;"></i>
+                    <span><strong style="color:#fff;">نبذة برمجية:</strong> هندسة وتطوير تطبيقات الويب الكاملة باستخدام بايثون (Flask)، وتصميم الواجهات المتكاملة والمعالجات المحلية الفائقة الكفاءة.</span>
+                </div>
+            </div>
+        </div>
+        
     </div>
 
     <div class="global-footer-bar">
         حقوق النشر محفوظة برمجياً وتعود إلى المسؤول البراوي بتاريخ 2026 ©
     </div>
-
+"""
     <script>
-        const card3D = document.getElementById("cyberTiltCard3D");
-
-        if (window.innerWidth > 850) {
-            card3D.addEventListener("mousemove", (e) => {
-                const rect = card3D.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const calcX = -(y - (rect.height / 2)) / 14;
-                const calcY = (x - (rect.width / 2)) / 22;
-                
-                card3D.style.transform = `perspective(1000px) rotateX(${calcX}deg) rotateY(${calcY}deg)`;
-            });
-            
-            card3D.addEventListener("mouseleave", () => {
-                card3D.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
-            });
-        }
-
+        // الخوارزمية التزامنية لسحب الستارة المنبثقة دائرياً من menu.py وحقنها حياً فورا بدون أي تداخل
         function loadAndOpenSidebarMenu() {
             const zone = document.getElementById("dynamicMenuInjectionZone");
             
@@ -168,7 +152,7 @@ HOME_HTML_BODY = """
                 
                 zone.innerHTML = data.html;
                 setTimeout(() => { toggleSidebarMenu(true); }, 20);
-            }).catch(() => { alert("❌ عطل طارئ: تعذر جلب مستودع الستارة الجانبية."); });
+            }).catch(() => { alert("❌ عطل طارئ: تعذر جلب مستودع القائمة."); });
         }
 
         function toggleSidebarMenu(openState) {
