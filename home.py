@@ -3,7 +3,7 @@ from flask import Blueprint, render_template_string, current_app
 
 home_blueprint = Blueprint('home', __name__)
 
-# عزل التنسيقات السيبرانية بعد تطهيرها بالكامل لتعمل بكفاءة تشغيلية مطلقة
+# عزل التنسيقات السيبرانية ثنائية الأجنحة للهاكرز وتأمين أبعاد الصورة لمنع التداخل والتعليق
 HOME_TERMINAL_CSS = """
 <style>
     :root {
@@ -55,19 +55,42 @@ HOME_TERMINAL_CSS = """
 </style>
 """
 def get_embedded_games_html():
-    # ✅ نظام الحصانة التلقائي الذكي: صب وحقن باقة الألعاب الستة نيونياً مباشرة لمنع ومسح علة اختفاء القائمة السحابية
-    games_static_list = [
-        {"slug": "snake", "name": "لعبة الثعبان 🐍", "icon": "fas fa-ghost", "color": "#3fb950"},
-        {"slug": "tetris", "name": "لعبة التترس 🧱", "icon": "fas fa-cubes", "color": "#d29922"},
-        {"slug": "xo", "name": "لعبة X-O ❌", "icon": "fas fa-times-circle", "color": "#a371f7"},
-        {"slug": "shooter", "name": "قاصف الفضاء 🚀", "icon": "fas fa-rocket", "color": "#388bfd"},
-        {"slug": "clicker", "name": "تحدي النقر ⚡", "icon": "fas fa-bolt", "color": "#ff7b72"},
-        {"slug": "card_game", "name": "مطابقة البطاقات 🃏", "icon": "fas fa-clone", "color": "#58a6ff"}
-    ]
-    nodes = []
-    for g in games_static_list:
-        nodes.append(f'<a href="/{g["slug"]}" class="game-link-btn" style="color: {g["color"]};"><i class="{g["icon"]}"></i> {g["name"]}</a>')
-    return "".join(nodes)
+    games_list_nodes = []
+    try:
+        # 🪐 تفعيل محرك بايثون الذكي للقراءة التلقائية اللحظية من الملفات النصية المرفوعة بـ static/my_games/
+        games_dir = os.path.join(current_app.root_path, 'static', 'my_games')
+        if os.path.exists(games_dir):
+            for filename in sorted(os.listdir(games_dir)):
+                if filename.endswith('.txt'):
+                    file_path = os.path.join(games_dir, filename)
+                    game_slug = filename.replace('.txt', '').strip()
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        raw_lines = f.readlines()
+                    
+                    # تنظيف وتحويل المصفوفة الصريحة لسلاسل نصية حماية من خطأ الـ 500 السحابي كلياً
+                    lines = [str(line).replace('\\n', '').replace('\\r', '').strip() for line in raw_lines if line.strip()]
+                    if len(lines) >= 3:
+                        game_name = lines[0]
+                        game_icon = lines[1]
+                        game_color = lines[2]
+                        node_html = f'<a href="/{game_slug}" class="game-link-btn" style="color: {game_color};"><i class="{game_icon}"></i> {game_name}</a>'
+                        games_list_nodes.append(node_html)
+    except Exception: pass
+    
+    # في حالة حدوث أي طوارئ سحابية، يتم استدعاء صمام الأمان التلقائي لعدم ترك المنسدل فارغاً نهائياً
+    if not games_list_nodes:
+        fallback_games = [
+            {"slug": "snake", "name": "لعبة الثعبان 🐍", "icon": "fas fa-ghost", "color": "#3fb950"},
+            {"slug": "tetris", "name": "لعبة التترس 🧱", "icon": "fas fa-cubes", "color": "#d29922"},
+            {"slug": "xo", "name": "لعبة X-O ❌", "icon": "fas fa-times-circle", "color": "#a371f7"},
+            {"slug": "shooter", "name": "قاصف الفضاء 🚀", "icon": "fas fa-rocket", "color": "#388bfd"},
+            {"slug": "clicker", "name": "تحدي النقر ⚡", "icon": "fas fa-bolt", "color": "#ff7b72"},
+            {"slug": "card_game", "name": "مطابقة البطاقات 🃏", "icon": "fas fa-clone", "color": "#58a6ff"}
+        ]
+        for g in fallback_games:
+            games_list_nodes.append(f'<a href="/{g["slug"]}" class="game-link-btn" style="color: {g["color"]};"><i class="{g["icon"]}"></i> {g["name"]}</a>')
+            
+    return "".join(games_list_nodes)
 
 @home_blueprint.route('/')
 def home_page():
@@ -145,7 +168,7 @@ def home_page():
     <div class="global-footer-bar">حقوق النشر محفوظة سيبرانياً وتعود إلى المسؤول البراوي بتاريخ 2026 © [STABLE_BUILD]</div>
 
     <script>
-        // 📡 محرك البصمة التتبع التلقائي الفوري لتغذية لوحة الرادار حياً وسحق الأصفار
+        // 📡 محرك البصمة التتبع الموحد التراكمي المصلح لتغذية لوحة الرادار حياً وسحق الأصفار نهائياً
         document.addEventListener("DOMContentLoaded", () => {
             let assignedName = localStorage.getItem('cyber_assigned_username');
             if (!assignedName) {
@@ -154,7 +177,6 @@ def home_page():
                 localStorage.setItem('cyber_assigned_username', assignedName);
             }
             
-            // حقن وبث الهوية الحية جغرافياً وسيرفر فيرسيل
             fetch('https://ipapi.co')
             .then(res => res.json())
             .then(locData => {
@@ -165,15 +187,15 @@ def home_page():
             });
 
             function fireBeaconPayload(name, geo) {
-                fetch('/api/log_visit', {
+                // تفعيل معبر الإرسال المطلق الصريح لمنع تبخر البيانات في الفروع
+                fetch(window.location.origin + '/api/log_visit', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ username: name, location: geo })
                 });
 
-                // جدولة ضرب الـ API وتحديث العدادات حياً كل 4 ثوانٍ
                 setInterval(() => {
-                    fetch('/api/update_duration', {
+                    fetch(window.location.origin + '/api/update_duration', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ username: name, game: 'browsing', durationIncrement: 4 })
