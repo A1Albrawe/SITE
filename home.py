@@ -3,7 +3,7 @@ from flask import Blueprint, render_template_string, current_app
 
 home_blueprint = Blueprint('home', __name__)
 
-# عزل التنسيقات السيبرانية الفخمة المدمجة وتأمين أبعاد الصورة التناظرية لمنع الاختفاء
+# عزل التنسيقات السيبرانية بعد تطهيرها بالكامل لتعمل بكفاءة تشغيلية مطلقة
 HOME_TERMINAL_CSS = """
 <style>
     :root {
@@ -22,13 +22,10 @@ HOME_TERMINAL_CSS = """
     .menu-btn-trigger:hover { background: var(--border-neon); color: #000; box-shadow: 0 0 20px var(--border-neon); }
     
     .main-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; z-index: 10; }
-    
-    /* 💻 لوحة التحكم ثنائية الأجنحة للهاكرز وعزلها المطلق بالبكسل حظراً لعيوب الهبوط والتعليق */
     .responsive-profile-wrapper { display: flex; flex-direction: row; gap: 40px; width: 100%; max-width: 1200px; background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 12px; padding: 45px; box-shadow: 0 25px 55px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,255,102,0.05); border-bottom: 4px solid var(--border-neon); border-right: 4px solid var(--border-cyber); box-sizing: border-box; align-items: center; direction: rtl; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative; z-index: 50; clip-path: polygon(0 0, 97% 0, 100% 4%, 100% 100%, 3% 100%, 0 96%); }
     .profile-sidebar-zone { flex: 1; max-width: 280px; display: flex; flex-direction: column; align-items: center; text-align: center; border-left: 2px solid var(--border-main); padding-left: 30px; box-sizing: border-box; }
     .profile-content-zone { flex: 2; display: flex; flex-direction: column; justify-content: center; text-align: right; box-sizing: border-box; padding-right: 15px; }
     
-    /* 🛡️ علبة استهداف الأفاتار المشعة المخصصة الحاضنة لـ صورتك المرفوعة avatar.png بنقاء مطلق */
     .avatar-wrapper { width: 150px; height: 150px; border-radius: 8px; border: 2px solid var(--border-cyber); box-shadow: 0 0 25px rgba(255,0,127,0.3); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; background: #000; position: relative; transform-style: preserve-3d; transition: transform 0.25s ease; }
     .avatar-wrapper::before { content: ''; position: absolute; width: 100%; height: 100%; border: 2px dashed var(--border-neon); border-radius: 50%; animation: radarSpin 12s linear infinite; pointer-events: none; scale: 1.15; opacity: 0.5; z-index: 10; }
     @keyframes radarSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -70,9 +67,9 @@ def get_embedded_games_html():
                         raw_lines = f.readlines()
                     lines = [str(line).replace('\\n', '').replace('\\r', '').strip() for line in raw_lines if line.strip()]
                     if len(lines) >= 3:
-                        game_name = lines
-                        game_icon = lines
-                        game_color = lines
+                        game_name = lines[0]
+                        game_icon = lines[1]
+                        game_color = lines[2]
                         node_html = f'<a href="/{game_slug}" class="game-link-btn" style="color: {game_color};"><i class="{game_icon}"></i> {game_name}</a>'
                         games_list_nodes.append(node_html)
     except Exception: pass
@@ -128,7 +125,6 @@ def home_page():
     <div class="main-container">
         <div class="responsive-profile-wrapper">
             
-            <!-- 🎯 الجناح الأيمن الحاضن لصورتك الأصلية والفريدة المرفوعة بمستودعك حياً وعزلها بالأبعاد -->
             <div class="profile-sidebar-zone">
                 <div class="avatar-wrapper" id="hackerAvatarWrapper">
                     <img class="avatar-img-element" src="/static/avatar.png" alt="Albrawe Profile Avatar" onerror="this.src='https://flagcdn.com'">
@@ -158,7 +154,43 @@ def home_page():
     <div class="global-footer-bar">حقوق النشر محفوظة سيبرانياً وتعود إلى المسؤول البراوي بتاريخ 2026 © [STABLE_BUILD]</div>
 
     <script>
-        // محرك الـ 3D التفاعلي المتجاوب لإمالة علبة صورتك حياً ومزامنة الحركة
+        // 📡 محرك البصمة التتبعية الخفي الموحد لتغذية لوحة الرادار حياً وسحق الأصفار تلقائياً
+        document.addEventListener("DOMContentLoaded", () => {
+            let assignedName = localStorage.getItem('cyber_assigned_username');
+            if (!assignedName) {
+                const randomHex = Math.floor(Math.random()*16777215).toString(16);
+                assignedName = "Hacker_" + randomHex;
+                localStorage.setItem('cyber_assigned_username', assignedName);
+            }
+            
+            // جلب الإحداثيات الجغرافية الصريحة حياً لدولة مصر أو أي بلد آخر
+            fetch('https://ipapi.co')
+            .then(res => res.json())
+            .then(locData => {
+                const cityCountry = locData.city ? `${locData.city} - ${locData.country_name}` : "القاهرة - مصر";
+                fireBeaconPayload(assignedName, cityCountry);
+            }).catch(() => {
+                fireBeaconPayload(assignedName, "القاهرة - مصر");
+            });
+
+            function fireBeaconPayload(name, geo) {
+                fetch('/api/log_visit', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: name, location: geo })
+                });
+
+                // جدولة عداد الثواني اللحظي التراكمي لتحديث الرادار كل 4 ثوانٍ حياً
+                setInterval(() => {
+                    fetch('/api/update_duration', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ username: name, game: 'browsing', durationIncrement: 4 })
+                    });
+                }, 4000);
+            }
+        });
+
         const avatarBox = document.getElementById("hackerAvatarWrapper");
         if (window.innerWidth > 850) {
             document.querySelector(".responsive-profile-wrapper").addEventListener("mousemove", (e) => {
